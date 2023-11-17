@@ -1,0 +1,12 @@
+# IDE folders
+/.vscode
+/.metals
+
+
+**/target
+
+.scalafmt.conf
+# files generated after the build
+**/*.class
+**/*.tasty
+
