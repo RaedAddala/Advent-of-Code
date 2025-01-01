@@ -76,9 +76,11 @@ int main(const int argc, const char *const argv[])
     std::sort(pointsA.begin(), pointsA.end());
     std::sort(pointsB.begin(), pointsB.end());
 
+    const auto zipped = std::ranges::views::zip(pointsA, pointsB);
+
     ull sum = std::transform_reduce(
-        std::ranges::views::zip(pointsA, pointsB).begin(),
-        std::ranges::views::zip(pointsA, pointsB).end(),
+        zipped.begin(),
+        zipped.end(),
         0ull,
         std::plus<>{}, // Reduction (sum the differences)
         [](auto pair)
