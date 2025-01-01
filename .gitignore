@@ -10,3 +10,7 @@
 **/*.class
 **/*.tasty
 
+# For c++ files
+*.obj
+*.o
+*.exe
