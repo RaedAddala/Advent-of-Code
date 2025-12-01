@@ -17,7 +17,7 @@ func main() {
 
 	filename := os.Args[1]
 	total := 50
-	totalZeros := 0
+	crossings := 0
 
 	file, err := os.Open(filename)
 	if err != nil {
@@ -31,39 +31,67 @@ func main() {
 		lineNum++
 		line := strings.TrimSpace(scanner.Text())
 		if line == "" {
-			continue // skip empty lines
+			continue
 		}
 
 		if len(line) < 2 {
-			log.Fatalf("Line %d: too short, expected R/L followed by number", lineNum)
+			log.Fatalf("Line %d: too short", lineNum)
 		}
 
 		dir := strings.ToUpper(line[:1])
 		numStr := line[1:]
-
 		num, err := strconv.Atoi(numStr)
 		if err != nil {
 			log.Fatalf("Line %d: invalid number '%s'", lineNum, numStr)
 		}
 
-		switch dir {
-		case "R":
-			total += num
-		case "L":
-			total -= num
-		default:
-			log.Fatalf("Line %d: invalid direction '%s', must be R or L", lineNum, dir)
+		delta := num
+		if dir == "L" {
+			delta = -num
+		} else if dir != "R" {
+			log.Fatalf("Line %d: invalid direction '%s'", lineNum, dir)
 		}
+
+		oldTotal := total
+
+		total += delta
 		total = ((total % 100) + 100) % 100
-		if total == 0 {
-			totalZeros += 1
-		}
+
+		crossings += countCrossings(oldTotal, delta)
 	}
 
 	if err := scanner.Err(); err != nil {
 		log.Fatalf("Error reading file: %v", err)
 	}
 
-	fmt.Printf("Number of Zeros: %d\n", totalZeros)
+	fmt.Printf("Number of times passed through 0: %d\n", crossings)
+}
 
+func countCrossings(oldPos, delta int) int {
+	if delta == 0 {
+		return 0 // no movement
+	}
+
+	count := 0
+	step := 1
+	if delta < 0 {
+		step = -1
+	}
+
+	pos := oldPos
+	for i := 0; i < abs(delta); i++ {
+		pos += step
+		if ((pos%100)+100)%100 == 0 {
+			count++
+		}
+	}
+
+	return count
+}
+
+func abs(x int) int {
+	if x < 0 {
+		return -x
+	}
+	return x
 }
