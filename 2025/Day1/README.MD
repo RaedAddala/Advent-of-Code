@@ -2,6 +2,43 @@
 
 [Official Problem](https://adventofcode.com/2025/day/1)
 
+## Solution
+
+### Part 1
+
+Algorithm:
+
+- Each non-empty input line is a move: _R_ or _L_ (case-insensitive).
+- Start accumulator total = $50$.
+- Parse first char as direction (must be _R_ or _L_), remaining substring as a positive integer.
+- Apply: _R_ adds, _L_ subtracts.
+- After every operation wrap into $0..99$: ((total % 100) + 100) % 100.
+- Count how many times the wrapped value equals 0.
+- Output that zero count.
+
+Complexity: $O(N)$ time, $O(1)$ space.
+
+Implementation notes:
+
+- V1 uses ``strconv`` and higher-level string helpers.
+- V2 performs manual byte-wise parsing and in-place uppercasing to reduce allocations and slightly improve speed.
+- Both validate format early and exit on malformed input.
+
+Edge cases:
+
+- Empty lines skipped.
+- Large intermediate positives/negatives safely wrapped.
+- Any non-digit in the numeric portion triggers a fatal error.
+
+Example:
+Input:
+R10
+L20
+R60
+Processing: 50->60->40->0 (zero counted once). Output: Number of Zeros: 1
+
+### Part 2
+
 ## Folder Structure
 
 ```plaintext
@@ -96,7 +133,14 @@ go build -ldflags="-s -w -buildid=" -trimpath -o day1_v2 main.go
     sudo nice -n -10 hyperfine -N -w 20 -r 2000 "./day1_v1 ../../input.txt"
     ```
 
-## Benchmark Results
+## Benchmark Results for Part 1
+
+| Version | Time (hyperfine)              | Command Used                              |
+|---------|-------------------------------|-------------------------------------------|
+| V1      | Time (mean ± σ):       1.4 ms ±   0.2 ms    [User: 1.0 ms, System: 0.4 ms] | `sudo nice -n -10 hyperfine -N -w 20 -r 2000 "./day1_v1 ../../input.txt"`|
+| V2      | Time (mean ± σ):       1.3 ms ±   0.2 ms    [User: 1.0 ms, System: 0.3 ms] | `sudo nice -n -10 hyperfine -N -w 20 -r 2000 "./day1_v2 ../../input.txt"` |
+
+## Benchmark Results for Part 2
 
 | Version | Time (hyperfine)              | Command Used                              |
 |---------|-------------------------------|-------------------------------------------|
